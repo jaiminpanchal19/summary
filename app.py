@@ -65,36 +65,30 @@ def main():
 
     if pdf_file:
         st.write("Processing... Please wait.")
-        # Use asyncio to execute text extraction and summary generation asynchronously
-        async def process_pdf():
-            pdf_text = extract_text_from_pdf(pdf_file)
-            summary = generate_summary(pdf_text)
 
-            # Display summary
-            st.subheader("Summary")
-            st.text_area("Text", summary, height=200)
+        pdf_text = extract_text_from_pdf(pdf_file)
+        summary = generate_summary(pdf_text)
 
-            # Translation and audio conversion
-            status = st.selectbox("Select your language", ['English', 'Hindi', 'Gujarati'])
-            if status == 'English':
-                final_text = summary
-                output_file = 'English_audio.mp3'
-            else:
-                dest_language = 'hi' if status == 'Hindi' else 'gu'
-                translation = await loop.run_in_executor(None, translate_text, summary, dest_language)
-                final_text = translation
-                output_file = f'{status}_audio.mp3'
+        # Display summary
+        st.subheader("Summary")
+        st.text_area("Text", summary, height=200)
 
-            if st.button('Download Audio'):
-                st.spinner(text='Downloading...')
-                await loop.run_in_executor(None, convert_text_to_speech, final_text, output_file)
-                st.success("Downloaded")
-                st.balloons()
+        # Translation and audio conversion
+        status = st.selectbox("Select your language", ['English', 'Hindi', 'Gujarati'])
+        if status == 'English':
+            final_text = summary
+            output_file = 'English_audio.mp3'
+        else:
+            dest_language = 'hi' if status == 'Hindi' else 'gu'
+            translation = translate_text(summary, dest_language)
+            final_text = translation
+            output_file = f'{status}_audio.mp3'
 
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        loop.run_until_complete(process_pdf())
+        if st.button('Download Audio'):
+            st.spinner(text='Downloading...')
+            convert_text_to_speech(final_text, output_file)
+            st.success("Downloaded")
+            st.balloons()
 
 if __name__ == "__main__":
     main()
-
