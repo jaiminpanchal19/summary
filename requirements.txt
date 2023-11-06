@@ -5,4 +5,4 @@ gTTS==2.2.0
 googletrans==4.0.0-rc1
 PyMuPDF==1.18.12
 transformers==4.13.0
-asyncio==3.5.4
+asyncio==3.4.3
