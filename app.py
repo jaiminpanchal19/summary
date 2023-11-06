@@ -2,7 +2,14 @@
 """
 Created on Sun Aug 27 19:56:25 2023
 
-@author: Dell
+@author: Dell\
+    text = ""
+    with pdf_file:
+        pdf_reader = PdfReader(pdf_file)
+        for page_num in range(len(pdf_reader.pages)):
+            page = pdf_reader.pages[page_num]
+            text += page.extract_text()
+    return text
 """
 
 
@@ -21,11 +28,10 @@ translator = Translator()
 # Function for extracting text from a PDF file
 def extract_text_from_pdf(pdf_file):
     text = ""
-    with pdf_file:
-        pdf_reader = PdfReader(pdf_file)
-        for page_num in range(len(pdf_reader.pages)):
-            page = pdf_reader.pages[page_num]
-            text += page.extract_text()
+    pdf_document = fitz.open(stream=pdf_file.read(), filetype="pdf")
+    for page_num in range(pdf_document.page_count):
+        page = pdf_document[page_num]
+        text += page.get_text("text")
     return text
 
 # Function for generating a summary
